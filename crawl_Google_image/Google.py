@@ -2,12 +2,12 @@ import os
 import sys
 import requests
 import re
-import HTMLParser
+from html.parser import HTMLParser
 import urllib
 
 patterns = {'item_details': r'<a\s*href="/url\?q=(?P<web_url>[^"]+)">\s*<img\s*height="\d+"\s*src="(?P<img_url>[^"]+)"'}
 re_patterns = re.compile(patterns['item_details'],re.VERBOSE)
-html_parser = HTMLParser.HTMLParser()
+#html_parser = HTMLParser.HTMLParser()
 
 BaseSaveDir = 'downloads'
 
@@ -17,11 +17,14 @@ class Search(object):
     def __init__(self):
         ''' Constructor '''
         self.server = 'https://www.google.com'
-        print 'Using sever: ' + self.server
+        print ('Using sever: ' + self.server)
 
     def get(self, keyword, n):
+        '''
+        要搜索的关键词
+        '''
         keyword = '+'.join(keyword.split(' '))
-        print keyword
+        print (keyword)
         rset = list()
 
         img_num = 0
@@ -31,14 +34,14 @@ class Search(object):
                                + '&start=%d' % start)
             r = requests.get(req)
             
-            matches = re_patterns.findall(r.content)
+            matches = re_patterns.findall(r.content.decode('utf-8'))
             start += len(matches)
-            print len(matches)
+            print (len(matches))
             if matches:
                 for ii in range(len(matches)):
                     match = matches[ii]
-                    web_url = html_parser.unescape(match[0])
-                    img_url = html_parser.unescape(match[1])
+                    web_url = HTMLParser.unescape(match[0])
+                    img_url = HTMLParser.unescape(match[1])
                     web_url = urllib.unquote(web_url)
                     img_url = urllib.unquote(img_url)
                     html_file_name = os.path.join(BaseSaveDir,query,str(img_num)+'.html')
@@ -60,8 +63,8 @@ class Search(object):
 
 if __name__ == "__main__":
     if len(sys.argv) < 3:
-        print "Usage:"
-        print '\t%s query #images' % ('Google.py', )
+        print ("Usage:")
+        print ('\t%s query #images' % ('Google.py', ))
         sys.exit(0)
 
     s = Search()

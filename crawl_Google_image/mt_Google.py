@@ -15,7 +15,7 @@ logging.basicConfig(filename=__file__+'.log',
                     level=logging.INFO)
 
 ITEMS = file('queries.txt').read().split('\n')
-print ITEMS
+print (ITEMS)
 
 def crawl_one(q):
     time.sleep(1)
@@ -35,7 +35,7 @@ class myThread (threading.Thread):
         if len(ITEMS) > 0:
             item = ITEMS.pop()
             item = item.strip('\r')
-            print "%d items remaining" % (len(ITEMS))
+            print ("%d items remaining" % (len(ITEMS)))
         threadLock.release()
         if item and not item.startswith('#'):
             crawl_one(item)
@@ -54,4 +54,4 @@ while len(ITEMS) > 0:
         if not threads[i].isAlive():
             threads[i] = myThread(i)
             threads[i].start()
-print "Exiting Main Tread"
+print ("Exiting Main Tread")
